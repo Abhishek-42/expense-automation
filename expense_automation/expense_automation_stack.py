@@ -1,8 +1,6 @@
-from aws_cdk import (
-    # Duration,
-    Stack,
-    # aws_sqs as sqs,
-)
+from aws_cdk import Stack
+from aws_cdk import aws_s3 as s3
+
 from constructs import Construct
 
 class ExpenseAutomationStack(Stack):
@@ -10,10 +8,12 @@ class ExpenseAutomationStack(Stack):
     def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
 
-        # The code that defines your stack goes here
+        s3_b= s3.Bucket(
+                self , 
+                "Transaction-bucket" , 
+                bucket_name= "expense-automation-transactions",
+                block_public_access= s3.BlockPublicAccess.BLOCK_ALL
+                )
+        
+        
 
-        # example resource
-        # queue = sqs.Queue(
-        #     self, "ExpenseAutomationQueue",
-        #     visibility_timeout=Duration.seconds(300),
-        # )
