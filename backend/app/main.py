@@ -16,7 +16,8 @@ app.add_middleware(
 )
 
 @app.post("/upload/transactions")
-async def upload_transactions(user_id: str,file: UploadFile = File(...)):
+async def upload_transactions(
+    user_id: str = Form(...),file: UploadFile = File(...)):
     response = user_ids.get_item(
         Key = {"user_id":user_id}
     )
