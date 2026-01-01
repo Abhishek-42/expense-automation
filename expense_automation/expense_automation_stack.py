@@ -17,12 +17,22 @@ class ExpenseAutomationStack(Stack):
                 block_public_access= s3.BlockPublicAccess.BLOCK_ALL
                 )
         
-        db_= db.Table(
+        db.Table(
             self,
             "Transaction-history-data",
             table_name= "transactions",
             partition_key= db.Attribute(
                 name="transaction_id",
+                type=db.AttributeType.STRING
+            )
+        )
+
+        db.Table(
+            self,
+            "User_ID_data",
+            table_name= "User_IDs",
+            partition_key= db.Attribute(
+                name="user_id",
                 type=db.AttributeType.STRING
             )
         )

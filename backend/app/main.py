@@ -1,6 +1,6 @@
 from fastapi import FastAPI, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
-from app.db import s3_client, bucket_name  , transactions_table
+from app.db import s3_client, bucket_name  , transactions_table , user_ids
 import csv
 import io
 import uuid
@@ -16,9 +16,16 @@ app.add_middleware(
 )
 
 @app.post("/upload/transactions")
-async def upload_transactions(file: UploadFile = File(...)):
+async def upload_transactions(user_id: str,file: UploadFile = File(...)):
+    response = user_ids.get_item(
+        Key = {"user_id":user_id}
+    )
+    if "Item" not in response:
+        return {"Error" : "User not found"}
+    
     if not file.filename.endswith(".csv"):
         return {"error": "only csv allowed"}
+    
 
     content = await file.read()
     text = content.decode("utf-8")
@@ -37,7 +44,7 @@ async def upload_transactions(file: UploadFile = File(...)):
         #For Dynamo DB value insertion 
         item ={
             "transaction_id" : str(uuid.uuid4()),
-            "User_id" : "test_user",
+            "user_id" : user_id,
             "Service_Name" : row["description"],
             "amount" : dec(row["amount"]),
             "date" : row["date"]
@@ -58,12 +65,33 @@ async def upload_transactions(file: UploadFile = File(...)):
     #return {"transaction" : item}
 
 @app.get("/transactions")
-def get_transactions():
-    response = transactions_table.scan()
+def get_transactions(user_id:str):
+    response = transactions_table.scan(
+        FilterExpression="user_id = :uid",
+        ExpressionAttributeValues={
+            ":uid": user_id
+        }
+    )
     return {"items": response["Items"]}
 
 @app.get("/health")
 def health():
     return {"status": "ok"}
+
+@app.post("/user")
+def create_user(user_id:str):
+    response = user_ids.get_item(
+        Key={"user_id": user_id}
+    )
+    if "Item" in response:
+        return {"error": "user already exists"}
+    
+    user_ids.put_item(
+        Item={"user_id": user_id}
+    )
+
+    return{
+        "Status": "User Created"
+    }
 
 
