@@ -20,4 +20,4 @@ dynamodb = boto3.resource(
 
 transactions_table = dynamodb.Table("transactions")
 
-user_ids = dynamodb.Table("User-IDs")
+user_ids = dynamodb.Table("User_IDs")
