@@ -1,58 +1,32 @@
+# Expense Automation System
 
-# Welcome to your CDK Python project!
+The Expense Automation System is a cloud-based financial tracking application designed to automatically identify and manage recurring subscriptions and regular bill payments from a user’s bank transaction history.
 
-This is a blank project for CDK development with Python.
+## Overview
 
-The `cdk.json` file tells the CDK Toolkit how to execute your app.
+The system allows users to upload a CSV file exported from their bank or credit card provider, which contains detailed transaction records including dates, descriptions, and debit amounts. Once uploaded, the file is securely stored in Amazon S3 and processed by a backend service built using Python and FastAPI.
 
-This project is set up like a standard Python project.  The initialization
-process also creates a virtualenv within this project, stored under the `.venv`
-directory.  To create the virtualenv it assumes that there is a `python3`
-(or `python` for Windows) executable in your path with access to the `venv`
-package. If for any reason the automatic creation of the virtualenv fails,
-you can create the virtualenv manually.
+The application parses the transaction data, filters debit entries, normalizes merchant  names, and applies rule-based pattern recognition to detect recurring payments. A    transaction is classified as a subscription if it shows:    
+- Consistent merchant identity   
+- Similar transaction amounts within a defined tolerance range    
+- A recurring interval (typically between 28 and 31 days across multiple cycles)
 
-To manually create a virtualenv on MacOS and Linux:
+Instead of storing complete raw transaction history, the system retains only structured subscription metadata such as:
+- Merchant name    
+- Average billing amount   
+- Billing cycle 
+- Last payment date
+- Next expected deduction date
+- A confidence score indicating detection reliability
 
-```
-$ python -m venv .venv
-```
+This processed data is stored in Amazon DynamoDB, enabling scalable and efficient user-specific data management.
 
-After the init process completes and the virtualenv is created, you can use the following
-step to activate your virtualenv.
+## Automated Notifications
 
-```
-$ source .venv/bin/activate
-```
+The system also includes an automated notification mechanism that proactively alerts users before upcoming deductions. A scheduled event, triggered using AWS EventBridge, periodically invokes backend logic to evaluate upcoming subscription due dates. If a recurring payment is expected within a predefined window, such as three to five days, the system sends an email reminder using Amazon Simple Email Service (SES), helping users maintain financial awareness and avoid unexpected deductions.
 
-If you are a Windows platform, you would activate the virtualenv like this:
+## Architecture & Technology Stack
 
-```
-% .venv\Scripts\activate.bat
-```
+The backend is implemented using FastAPI to ensure high performance and asynchronous request handling, while DynamoDB provides a flexible NoSQL data model optimized for scalable cloud environments. The overall architecture follows modern cloud-native design principles, emphasizing serverless integration, cost efficiency, data privacy, and modular processing.
 
-Once the virtualenv is activated, you can install the required dependencies.
-
-```
-$ pip install -r requirements.txt
-```
-
-At this point you can now synthesize the CloudFormation template for this code.
-
-```
-$ cdk synth
-```
-
-To add additional dependencies, for example other CDK libraries, just add
-them to your `setup.py` file and rerun the `pip install -r requirements.txt`
-command.
-
-## Useful commands
-
- * `cdk ls`          list all stacks in the app
- * `cdk synth`       emits the synthesized CloudFormation template
- * `cdk deploy`      deploy this stack to your default AWS account/region
- * `cdk diff`        compare deployed stack with current state
- * `cdk docs`        open CDK documentation
-
-Enjoy!
+By combining automated financial pattern detection with cloud infrastructure services, the Expense Automation System demonstrates practical backend engineering, event-driven design, and real-world problem solving suitable for a robust cloud project.  

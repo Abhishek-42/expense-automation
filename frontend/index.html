@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense Automation System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="glass-container" id="auth-container">
+        <!-- Notification Area -->
+        <div id="notification" class="notification hidden"></div>
+
+        <!-- Tab Navigation for Login / Register -->
+        <div class="tabs">
+            <button class="tab-btn active" id="tab-login" onclick="switchTab('login')">Login</button>
+            <button class="tab-btn" id="tab-register" onclick="switchTab('register')">Register</button>
+        </div>
+
+        <!-- Login Form -->
+        <form id="login-form" class="auth-form active">
+            <h2>Welcome Back</h2>
+            <p class="subtitle">Enter your credentials to access your account.</p>
+            <div class="input-group">
+                <label for="login-username">Username</label>
+                <input type="text" id="login-username" required placeholder="john_doe">
+            </div>
+            <div class="input-group">
+                <label for="login-password">Password</label>
+                <input type="password" id="login-password" required placeholder="••••••••">
+            </div>
+            <button type="submit" class="primary-btn">Log In</button>
+        </form>
+
+        <!-- Register Form -->
+        <form id="register-form" class="auth-form hidden">
+            <h2>Create Account</h2>
+            <p class="subtitle">Join to start automating your expenses.</p>
+            <div class="input-group">
+                <label for="reg-username">Username</label>
+                <input type="text" id="reg-username" required placeholder="Choose a username">
+            </div>
+            <div class="input-group">
+                <label for="reg-password">Password</label>
+                <input type="password" id="reg-password" required placeholder="Create a strong password">
+            </div>
+            <button type="submit" class="primary-btn">Sign Up</button>
+        </form>
+    </div>
+
+    <!-- Dashboard Container (Hidden until logged in) -->
+    <div class="glass-container hidden" id="dashboard-container">
+        <div class="dashboard-header">
+            <h2>Expense Dashboard</h2>
+            <button id="logout-btn" class="secondary-btn" onclick="logout()">Log Out</button>
+        </div>
+
+        <div class="upload-section">
+            <h3>Upload Transactions</h3>
+            <p>Upload your bank statement (CSV file) to identify recurring subscriptions.</p>
+
+            <form id="upload-form">
+                <div class="file-drop-area">
+                    <span class="file-msg">Choose a CSV file or drag it here</span>
+                    <input class="file-input" type="file" id="csv-file" accept=".csv" required>
+                </div>
+                <button type="submit" class="primary-btn" id="upload-btn">Upload and Process</button>
+            </form>
+            <div id="upload-status" class="status-msg"></div>
+        </div>
+
+    </div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>

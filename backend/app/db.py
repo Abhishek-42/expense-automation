@@ -21,3 +21,5 @@ dynamodb = boto3.resource(
 transactions_table = dynamodb.Table("transactions")
 
 user_ids = dynamodb.Table("User_IDs")
+
+subscriptions_table = dynamodb.Table("Subscriptions")

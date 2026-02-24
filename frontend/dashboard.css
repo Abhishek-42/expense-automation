@@ -1,0 +1,117 @@
+/* Extra styling specifically for the wider Dashboard page */
+
+.glass-nav {
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    padding: 15px 40px;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--glass-border);
+    z-index: 1000;
+}
+
+.nav-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.dashboard-wrapper {
+    width: 100%;
+    max-width: 900px;
+    margin-top: 100px;
+    /* offset for navbar */
+    padding: 20px;
+}
+
+.dashboard-card {
+    max-width: 100% !important;
+    /* override the 450px login limit */
+    padding: 50px;
+}
+
+.stats-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--glass-border);
+    padding-bottom: 25px;
+    margin-bottom: 30px;
+}
+
+.total-stat {
+    text-align: right;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 15px 25px;
+    border-radius: 12px;
+    border: 1px solid var(--glass-border);
+}
+
+.stat-label {
+    display: block;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-secondary);
+    margin-bottom: 5px;
+}
+
+.stat-value {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--success-color);
+    text-shadow: 0 0 10px rgba(0, 210, 255, 0.3);
+}
+
+/* Dashboard Table styling */
+.table-container {
+    background: rgba(0, 0, 0, 0.15);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 30px;
+}
+
+#subs-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#subs-table th,
+#subs-table td {
+    padding: 18px 25px;
+    text-align: left;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+#subs-table th {
+    background: rgba(255, 255, 255, 0.03);
+    color: var(--accent-color);
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 600;
+}
+
+#subs-table tr:hover {
+    background: rgba(255, 255, 255, 0.03);
+    transition: 0.2s;
+}
+
+#subs-table tr:last-child td {
+    border-bottom: none;
+}
+
+.dashboard-footer {
+    display: flex;
+    justify-content: flex-start;
+}
+
+.back-btn {
+    text-decoration: none;
+    font-size: 14px;
+}

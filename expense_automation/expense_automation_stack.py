@@ -36,5 +36,16 @@ class ExpenseAutomationStack(Stack):
                 type=db.AttributeType.STRING
             )
         )
-
-
+        db.Table(
+            self,
+            "Subscriptions_data",
+            table_name= "Subscriptions",
+            partition_key= db.Attribute(
+                name="user_id",
+                type=db.AttributeType.STRING
+            ),
+            sort_key= db.Attribute(
+                name="subscription_id",
+                type=db.AttributeType.STRING
+            )
+        )

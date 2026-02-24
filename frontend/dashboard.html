@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="dashboard.css">
+</head>
+
+<body>
+    <!-- Full Width Navbar -->
+    <nav class="glass-nav">
+        <div class="nav-content">
+            <h2>Expense Automation</h2>
+            <button id="logout-btn" class="secondary-btn" onclick="logout()">Log Out</button>
+        </div>
+    </nav>
+
+    <!-- Main Dashboard Body -->
+    <main class="dashboard-wrapper">
+        <div class="glass-container dashboard-card">
+
+            <!-- Summary Stats Header -->
+            <div class="stats-header">
+                <div>
+                    <h3 class="greeting">Your Subscriptions</h3>
+                    <p class="subtitle">Personalized recurring payment detection</p>
+                </div>
+                <div class="total-stat">
+                    <span class="stat-label">Estimated Monthly Total</span>
+                    <span class="stat-value" id="monthly-total">$0.00</span>
+                </div>
+            </div>
+
+            <!-- Error/Loading Notifications -->
+            <div id="subs-loading" class="notification info">Scanning your processed transactions...</div>
+            <div id="subs-error" class="notification error hidden"></div>
+
+            <!-- Detailed Data Table -->
+            <div class="table-container">
+                <table id="subs-table">
+                    <thead>
+                        <tr>
+                            <th>Service Provider</th>
+                            <th>Average Amount</th>
+                            <th>Billing Frequency</th>
+                            <th>Last Detected</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="subs-list">
+                        <!-- Populated completely by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="dashboard-footer">
+                <a href="index.html" class="secondary-btn back-btn">&larr; Upload More Data</a>
+            </div>
+
+        </div>
+    </main>
+
+    <script src="dashboard.js"></script>
+</body>
+
+</html>
