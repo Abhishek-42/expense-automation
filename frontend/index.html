@@ -4,74 +4,331 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Expense Automation System</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>ExpenseIQ — Smart Subscription Tracker</title>
+    <meta name="description" content="Automatically detect and track recurring subscriptions from your bank statements. Cloud-powered financial intelligence.">
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* ── Auth Page Layout ──────────────────────────────── */
+        body.auth-page {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 24px;
+        }
+
+        .auth-layout {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            width: 100%;
+            max-width: 920px;
+            min-height: 560px;
+            background: var(--bg-card);
+            backdrop-filter: blur(24px) saturate(1.2);
+            -webkit-backdrop-filter: blur(24px) saturate(1.2);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--card-shadow);
+            overflow: hidden;
+        }
+
+        /* Left Panel — Branding */
+        .auth-brand {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 48px 44px;
+            background:
+                linear-gradient(160deg, rgba(79, 125, 245, 0.10) 0%, rgba(56, 189, 248, 0.06) 100%);
+            border-right: 1px solid var(--border-subtle);
+        }
+
+        .brand-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 36px;
+        }
+
+        .brand-icon {
+            width: 42px;
+            height: 42px;
+            background: var(--accent-gradient);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .brand-icon svg {
+            width: 22px;
+            height: 22px;
+            stroke: #fff;
+            stroke-width: 2;
+            fill: none;
+        }
+
+        .brand-name {
+            font-size: 1.375rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        .brand-tagline {
+            font-size: 1.75rem;
+            font-weight: 700;
+            line-height: 1.3;
+            letter-spacing: -0.025em;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent-cyan) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .brand-desc {
+            font-size: 0.9375rem;
+            color: var(--text-secondary);
+            line-height: 1.65;
+            max-width: 340px;
+        }
+
+        .brand-features {
+            list-style: none;
+            margin-top: 32px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .brand-features li {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.8125rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .feature-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--accent-blue);
+            flex-shrink: 0;
+        }
+
+        /* Right Panel — Form */
+        .auth-form-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 48px 44px;
+        }
+
+        .auth-form-panel .glass-container {
+            max-width: 100%;
+            padding: 0;
+            background: transparent;
+            border: none;
+            box-shadow: none;
+            backdrop-filter: none;
+        }
+
+        /* ── Onboarding Upload (shown once after registration) ── */
+        .onboarding-panel {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 560px;
+            background: var(--bg-card);
+            backdrop-filter: blur(24px) saturate(1.2);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--card-shadow);
+            padding: 48px 44px;
+        }
+
+        .onboarding-panel h2 {
+            margin-bottom: 4px;
+        }
+
+        .onboarding-step {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--accent-blue);
+        }
+
+        .step-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: rgba(79, 125, 245, 0.15);
+            font-size: 0.6875rem;
+        }
+
+        .skip-link {
+            display: inline-block;
+            margin-top: 12px;
+            font-size: 0.8125rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .skip-link:hover {
+            color: var(--text-primary);
+        }
+
+        /* ── Responsive ──────────────────────────────────── */
+        @media (max-width: 780px) {
+            .auth-layout {
+                flex-direction: column;
+                max-width: 460px;
+                min-height: auto;
+            }
+
+            .auth-brand {
+                padding: 32px 28px 24px;
+                border-right: none;
+                border-bottom: 1px solid var(--border-subtle);
+            }
+
+            .brand-tagline {
+                font-size: 1.375rem;
+            }
+
+            .brand-features {
+                display: none;
+            }
+
+            .auth-form-panel {
+                padding: 28px;
+            }
+
+            .onboarding-panel {
+                margin: 16px;
+                padding: 28px 22px;
+            }
+        }
+    </style>
 </head>
 
-<body>
-    <div class="glass-container" id="auth-container">
-        <!-- Notification Area -->
-        <div id="notification" class="notification hidden"></div>
+<body class="auth-page">
 
-        <!-- Tab Navigation for Login / Register -->
-        <div class="tabs">
-            <button class="tab-btn active" id="tab-login" onclick="switchTab('login')">Login</button>
-            <button class="tab-btn" id="tab-register" onclick="switchTab('register')">Register</button>
+    <!-- ═══════════════════════════════════════════════════
+         SCREEN 1: Auth Layout (Login / Register)
+         Visible by default. Hidden once logged in.
+    ═══════════════════════════════════════════════════ -->
+    <div class="auth-layout" id="auth-layout">
+        <!-- Left Panel: Branding -->
+        <div class="auth-brand">
+            <div class="brand-logo">
+                <div class="brand-icon">
+                    <svg viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M2.25 18.75a60.07 60.07 0 0 1 15.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 0 1 3 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 0 0-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 0 1-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 0 0 3 15h-.75M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm3 0h.008v.008H18V10.5Zm-12 0h.008v.008H6V10.5Z" />
+                    </svg>
+                </div>
+                <span class="brand-name">ExpenseIQ</span>
+            </div>
+
+            <h1 class="brand-tagline">Know where your money goes.</h1>
+            <p class="brand-desc">
+                Upload your bank statements and let our engine automatically detect recurring subscriptions, estimate monthly costs, and alert you before deductions hit.
+            </p>
+
+            <ul class="brand-features">
+                <li><span class="feature-dot"></span>Automatic subscription detection</li>
+                <li><span class="feature-dot"></span>Recurring payment pattern analysis</li>
+                <li><span class="feature-dot"></span>Smart deduction alerts via email</li>
+                <li><span class="feature-dot"></span>Secure, cloud-native architecture</li>
+            </ul>
         </div>
 
-        <!-- Login Form -->
-        <form id="login-form" class="auth-form active">
-            <h2>Welcome Back</h2>
-            <p class="subtitle">Enter your credentials to access your account.</p>
-            <div class="input-group">
-                <label for="login-username">Username</label>
-                <input type="text" id="login-username" required placeholder="john_doe">
-            </div>
-            <div class="input-group">
-                <label for="login-password">Password</label>
-                <input type="password" id="login-password" required placeholder="••••••••">
-            </div>
-            <button type="submit" class="primary-btn">Log In</button>
-        </form>
+        <!-- Right Panel: Auth Forms -->
+        <div class="auth-form-panel">
+            <div class="glass-container" id="auth-container">
+                <!-- Notification -->
+                <div id="notification" class="notification hidden"></div>
 
-        <!-- Register Form -->
-        <form id="register-form" class="auth-form hidden">
-            <h2>Create Account</h2>
-            <p class="subtitle">Join to start automating your expenses.</p>
-            <div class="input-group">
-                <label for="reg-username">Username</label>
-                <input type="text" id="reg-username" required placeholder="Choose a username">
+                <!-- Tab Navigation -->
+                <div class="tabs">
+                    <button class="tab-btn active" id="tab-login" onclick="switchTab('login')">Sign In</button>
+                    <button class="tab-btn" id="tab-register" onclick="switchTab('register')">Create Account</button>
+                </div>
+
+                <!-- Login Form -->
+                <form id="login-form" class="auth-form active">
+                    <h2>Welcome back</h2>
+                    <p class="subtitle">Enter your credentials to access your dashboard.</p>
+                    <div class="input-group">
+                        <label for="login-username">Username</label>
+                        <input type="text" id="login-username" required placeholder="e.g. admin" autocomplete="username">
+                    </div>
+                    <div class="input-group">
+                        <label for="login-password">Password</label>
+                        <input type="password" id="login-password" required placeholder="••••••••" autocomplete="current-password">
+                    </div>
+                    <button type="submit" class="primary-btn" id="login-btn">Sign In</button>
+                </form>
+
+                <!-- Register Form -->
+                <form id="register-form" class="auth-form hidden">
+                    <h2>Get started</h2>
+                    <p class="subtitle">Create an account to begin tracking subscriptions.</p>
+                    <div class="input-group">
+                        <label for="reg-username">Username</label>
+                        <input type="text" id="reg-username" required placeholder="Choose a username" autocomplete="username">
+                    </div>
+                    <div class="input-group">
+                        <label for="reg-password">Password</label>
+                        <input type="password" id="reg-password" required placeholder="Create a password" autocomplete="new-password">
+                    </div>
+                    <button type="submit" class="primary-btn" id="register-btn">Create Account</button>
+                </form>
             </div>
-            <div class="input-group">
-                <label for="reg-password">Password</label>
-                <input type="password" id="reg-password" required placeholder="Create a strong password">
-            </div>
-            <button type="submit" class="primary-btn">Sign Up</button>
-        </form>
+        </div>
     </div>
 
-    <!-- Dashboard Container (Hidden until logged in) -->
-    <div class="glass-container hidden" id="dashboard-container">
-        <div class="dashboard-header">
-            <h2>Expense Dashboard</h2>
-            <button id="logout-btn" class="secondary-btn" onclick="logout()">Log Out</button>
+
+    <!-- ═══════════════════════════════════════════════════
+         SCREEN 2: One-Time Onboarding Upload
+         Shown ONLY after first registration.
+         Hidden for returning users who log in.
+    ═══════════════════════════════════════════════════ -->
+    <div class="onboarding-panel hidden" id="onboarding-panel">
+        <div class="onboarding-step">
+            <span class="step-badge">2</span>
+            Final Step — Import Data
         </div>
+        <h2>Upload your bank statement</h2>
+        <p class="subtitle">Upload a CSV export from your bank so we can detect your recurring subscriptions.</p>
 
-        <div class="upload-section">
-            <h3>Upload Transactions</h3>
-            <p>Upload your bank statement (CSV file) to identify recurring subscriptions.</p>
+        <form id="upload-form">
+            <div class="file-drop-area">
+                <span class="file-msg">Choose a CSV file or drag it here</span>
+                <input class="file-input" type="file" id="csv-file" accept=".csv" required>
+            </div>
+            <button type="submit" class="primary-btn" id="upload-btn">Upload &amp; Analyze</button>
+        </form>
+        <div id="upload-status" class="status-msg"></div>
 
-            <form id="upload-form">
-                <div class="file-drop-area">
-                    <span class="file-msg">Choose a CSV file or drag it here</span>
-                    <input class="file-input" type="file" id="csv-file" accept=".csv" required>
-                </div>
-                <button type="submit" class="primary-btn" id="upload-btn">Upload and Process</button>
-            </form>
-            <div id="upload-status" class="status-msg"></div>
-        </div>
-
+        <a class="skip-link" id="skip-upload" onclick="skipOnboarding()">Skip for now — I'll do this later →</a>
     </div>
 
     <script src="app.js"></script>

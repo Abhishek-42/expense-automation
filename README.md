@@ -29,4 +29,12 @@ The system also includes an automated notification mechanism that proactively al
 
 The backend is implemented using FastAPI to ensure high performance and asynchronous request handling, while DynamoDB provides a flexible NoSQL data model optimized for scalable cloud environments. The overall architecture follows modern cloud-native design principles, emphasizing serverless integration, cost efficiency, data privacy, and modular processing.
 
-By combining automated financial pattern detection with cloud infrastructure services, the Expense Automation System demonstrates practical backend engineering, event-driven design, and real-world problem solving suitable for a robust cloud project.  
+## Development Standards
+
+To ensure the project remains robust and maintainable for future developers, all contributions must adhere to these "Human-Centric" standards:
+- **Clean Architecture:** Maintain a clear separation between infrastructure (CDK), backend logic (FastAPI), and presentation (Vanilla JS/CSS).
+- **Self-Documenting Code:** Use descriptive naming for variables, functions, and files. Avoid clever "hacks" that sacrifice readability.
+- **Premium Aesthetics:** The frontend must maintain a high-quality, professional dark-blue theme with polished, responsive components.
+- **Documentation First:** Every major logic change should be reflected in the code comments and project trackers (`README.md`, `progress.md`).
+
+By combining automated financial pattern detection with cloud infrastructure services, the Expense Automation System demonstrates practical backend engineering, event-driven design, and real-world problem solving suitable for a robust cloud project.

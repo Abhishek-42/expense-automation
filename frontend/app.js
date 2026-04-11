@@ -1,26 +1,41 @@
-// Configuration
+/* ============================================================
+   APP.JS — Auth & Onboarding Logic
+   
+   FLOW:
+   1. If user already has a token → redirect to dashboard.html
+   2. Login → get token → redirect to dashboard.html
+   3. Register → auto-login → show one-time CSV upload → dashboard.html
+   4. Upload is ONLY shown once after registration (onboarding)
+   ============================================================ */
+
 const API_URL = 'http://127.0.0.1:8000';
 
-// DOM Elements
-const authContainer = document.getElementById('auth-container');
-const dashboardContainer = document.getElementById('dashboard-container');
-const loginForm = document.getElementById('login-form');
-const registerForm = document.getElementById('register-form');
-const uploadForm = document.getElementById('upload-form');
-const notification = document.getElementById('notification');
-const fileInput = document.getElementById('csv-file');
-const fileMsg = document.querySelector('.file-msg');
-const uploadStatus = document.getElementById('upload-status');
+// ── DOM References ──────────────────────────────────────
+const authLayout        = document.getElementById('auth-layout');
+const onboardingPanel   = document.getElementById('onboarding-panel');
+const loginForm         = document.getElementById('login-form');
+const registerForm      = document.getElementById('register-form');
+const uploadForm        = document.getElementById('upload-form');
+const notification      = document.getElementById('notification');
+const fileInput         = document.getElementById('csv-file');
+const fileMsg           = document.querySelector('.file-msg');
+const uploadStatus      = document.getElementById('upload-status');
 
-// Check Initial Auth State
+
+// ── Auth Guard ──────────────────────────────────────────
+// If user is already logged in, send them straight to the dashboard.
 document.addEventListener('DOMContentLoaded', () => {
     const token = localStorage.getItem('token');
     if (token) {
-        showDashboard();
+        window.location.href = 'dashboard.html';
     }
 });
 
-// UI Helpers
+
+// ══════════════════════════════════════════════════════════
+//  UI HELPERS
+// ══════════════════════════════════════════════════════════
+
 function switchTab(tab) {
     document.getElementById('tab-login').classList.remove('active');
     document.getElementById('tab-register').classList.remove('active');
@@ -47,67 +62,111 @@ function hideNotification() {
     notification.classList.add('hidden');
 }
 
-function showDashboard() {
-    authContainer.classList.add('hidden');
-    dashboardContainer.classList.remove('hidden');
-    hideNotification();
+// Transition from auth screen → onboarding upload screen
+function showOnboarding() {
+    authLayout.classList.add('hidden');
+    onboardingPanel.classList.remove('hidden');
 }
 
-function logout() {
-    localStorage.removeItem('token');
-    dashboardContainer.classList.add('hidden');
-    authContainer.classList.remove('hidden');
-    switchTab('login');
+// Skip onboarding and go straight to dashboard
+function skipOnboarding() {
+    window.location.href = 'dashboard.html';
 }
 
-// Update file input text when a file is selected
+// Update file name display when a file is selected
 fileInput.addEventListener('change', (e) => {
     if (e.target.files.length > 0) {
         fileMsg.textContent = e.target.files[0].name;
+        fileMsg.style.color = 'var(--accent-blue-light)';
     } else {
         fileMsg.textContent = 'Choose a CSV file or drag it here';
+        fileMsg.style.color = '';
     }
 });
 
-// --- API Calls ---
 
-// Register
+// ══════════════════════════════════════════════════════════
+//  API: REGISTER
+//  On success: auto-login the user, then show the
+//  one-time onboarding CSV upload panel.
+// ══════════════════════════════════════════════════════════
+
 registerForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     hideNotification();
+
+    const btn = document.getElementById('register-btn');
+    btn.textContent = 'Creating account...';
+    btn.disabled = true;
 
     const username = document.getElementById('reg-username').value;
     const password = document.getElementById('reg-password').value;
 
     try {
-        const response = await fetch(`${API_URL}/register`, {
+        // Step 1: Register the user
+        const regResponse = await fetch(`${API_URL}/register`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ username, password })
         });
 
-        const data = await response.json();
+        const regData = await regResponse.json();
 
-        if (response.ok) {
-            showNotification('Registration successful! Please log in.', 'success');
-            setTimeout(() => switchTab('login'), 2000);
-        } else {
-            showNotification(data.error || 'Registration failed');
+        if (!regResponse.ok) {
+            showNotification(regData.error || 'Registration failed');
+            return;
         }
+
+        // Step 2: Auto-login immediately after registration
+        const loginData = new URLSearchParams();
+        loginData.append('username', username);
+        loginData.append('password', password);
+
+        const loginResponse = await fetch(`${API_URL}/token`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: loginData
+        });
+
+        const tokenData = await loginResponse.json();
+
+        if (loginResponse.ok) {
+            // Save the JWT token
+            localStorage.setItem('token', tokenData.access_token);
+            // Show the one-time onboarding upload screen
+            showOnboarding();
+        } else {
+            // Registration succeeded but auto-login failed — fall back to login tab
+            showNotification('Account created! Please sign in.', 'success');
+            setTimeout(() => switchTab('login'), 1500);
+        }
+
     } catch (err) {
         showNotification('Failed to connect to server');
+    } finally {
+        btn.textContent = 'Create Account';
+        btn.disabled = false;
     }
 });
 
-// Login
+
+// ══════════════════════════════════════════════════════════
+//  API: LOGIN
+//  On success: store token and redirect straight to dashboard.
+//  NO upload prompt for returning users.
+// ══════════════════════════════════════════════════════════
+
 loginForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     hideNotification();
 
+    const btn = document.getElementById('login-btn');
+    btn.textContent = 'Signing in...';
+    btn.disabled = true;
+
     const username = document.getElementById('login-username').value;
     const password = document.getElementById('login-password').value;
 
-    // FastAPI's OAuth2 expects x-www-form-urlencoded data
     const formData = new URLSearchParams();
     formData.append('username', username);
     formData.append('password', password);
@@ -122,42 +181,52 @@ loginForm.addEventListener('submit', async (e) => {
         const data = await response.json();
 
         if (response.ok) {
-            // Save the JWT token exactly where the browser can find it later
             localStorage.setItem('token', data.access_token);
-            showDashboard();
+            // Returning users go directly to the dashboard — no upload
+            window.location.href = 'dashboard.html';
         } else {
-            // FastAPI's OAuth2PasswordRequestForm throws a 400 with a "detail" key for bad passwords.
             showNotification(data.detail || data.error || 'Incorrect username or password');
         }
     } catch (err) {
         showNotification('Failed to connect to server');
+    } finally {
+        btn.textContent = 'Sign In';
+        btn.disabled = false;
     }
 });
 
-// Upload CSV File
+
+// ══════════════════════════════════════════════════════════
+//  API: UPLOAD CSV (Onboarding — One-Time)
+//  This form only appears after a fresh registration.
+// ══════════════════════════════════════════════════════════
+
 uploadForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-    uploadStatus.textContent = "Uploading...";
+
+    const btn = document.getElementById('upload-btn');
+    btn.textContent = 'Analyzing...';
+    btn.disabled = true;
+    uploadStatus.textContent = 'Uploading your transactions...';
     uploadStatus.className = 'status-msg';
 
     const file = fileInput.files[0];
-    if (!file) return;
+    if (!file) {
+        btn.textContent = 'Upload & Analyze';
+        btn.disabled = false;
+        return;
+    }
 
-    // Prepare the file as multipart/form-data
     const formData = new FormData();
     formData.append('file', file);
 
-    // Retrieve our secure keycard
     const token = localStorage.getItem('token');
 
     try {
         const response = await fetch(`${API_URL}/upload/transactions`, {
             method: 'POST',
             headers: {
-                // Attach the JWT Token in the Authorization header
                 'Authorization': `Bearer ${token}`
-                // Do NOT set Content-Type manually when using FormData, 
-                // the browser calculates the boundary automatically.
             },
             body: formData
         });
@@ -165,24 +234,22 @@ uploadForm.addEventListener('submit', async (e) => {
         const data = await response.json();
 
         if (response.ok) {
-            uploadStatus.textContent = "Processing complete! Redirecting to dashboard...";
+            uploadStatus.textContent = `Done — ${data.subscriptions_detected || 0} subscriptions detected. Redirecting...`;
             uploadStatus.className = 'status-msg status-success';
 
-            // Redirect to the dedicated dashboard page after 1.5 seconds
+            // Head to dashboard after a brief success message
             setTimeout(() => {
                 window.location.href = 'dashboard.html';
             }, 1500);
         } else {
             uploadStatus.textContent = data.error || data.detail || 'Upload failed.';
             uploadStatus.className = 'status-msg status-error';
-            // If the token expired or is invalid, force a logout
-            if (response.status === 401) {
-                setTimeout(() => logout(), 2000);
-            }
         }
     } catch (err) {
         uploadStatus.textContent = 'Failed to communicate with the server.';
         uploadStatus.className = 'status-msg status-error';
+    } finally {
+        btn.textContent = 'Upload & Analyze';
+        btn.disabled = false;
     }
 });
-
