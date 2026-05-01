@@ -8,7 +8,7 @@
     <meta name="description" content="Automatically detect and track recurring subscriptions from your bank statements. Cloud-powered financial intelligence.">
     <link rel="stylesheet" href="style.css">
     <style>
-        /* ── Auth Page Layout ──────────────────────────────── */
+        /* auth layout */
         body.auth-page {
             display: flex;
             justify-content: center;
@@ -33,7 +33,7 @@
             overflow: hidden;
         }
 
-        /* Left Panel — Branding */
+        /* branding */
         .auth-brand {
             flex: 1;
             display: flex;
@@ -121,7 +121,7 @@
             flex-shrink: 0;
         }
 
-        /* Right Panel — Form */
+        /* right panel */
         .auth-form-panel {
             flex: 1;
             display: flex;
@@ -139,7 +139,7 @@
             backdrop-filter: none;
         }
 
-        /* ── Onboarding Upload (shown once after registration) ── */
+        /* onboarding upload */
         .onboarding-panel {
             position: relative;
             z-index: 1;
@@ -194,7 +194,7 @@
             color: var(--text-primary);
         }
 
-        /* ── Responsive ──────────────────────────────────── */
+        /* responsive */
         @media (max-width: 780px) {
             .auth-layout {
                 flex-direction: column;
@@ -230,10 +230,7 @@
 
 <body class="auth-page">
 
-    <!-- ═══════════════════════════════════════════════════
-         SCREEN 1: Auth Layout (Login / Register)
-         Visible by default. Hidden once logged in.
-    ═══════════════════════════════════════════════════ -->
+    <!-- login/register screen -->
     <div class="auth-layout" id="auth-layout">
         <!-- Left Panel: Branding -->
         <div class="auth-brand">
@@ -310,11 +307,7 @@
     </div>
 
 
-    <!-- ═══════════════════════════════════════════════════
-         SCREEN 2: One-Time Onboarding Upload
-         Shown ONLY after first registration.
-         Hidden for returning users who log in.
-    ═══════════════════════════════════════════════════ -->
+    <!-- onboarding upload screen -->
     <div class="onboarding-panel hidden" id="onboarding-panel">
         <div class="onboarding-step">
             <span class="step-badge">2</span>

@@ -1,14 +1,11 @@
-/* ============================================================
-   DASHBOARD — Client Logic
-   Handles: Auth guard, API fetch, table rendering, stats
-   ============================================================ */
+// dashboard logic
 
 // Automatically use local backend if testing locally, or the EC2 Public IP if hosted online!
 const API_URL = (window.location.protocol === 'file:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
     ? 'http://127.0.0.1:8000'
     : `http://${window.location.hostname}:8000`;
 
-// ── DOM References ──────────────────────────────────────
+// DOM elements
 const subsList      = document.getElementById('subs-list');
 const loadingMsg    = document.getElementById('subs-loading');
 const errorMsg      = document.getElementById('subs-error');
@@ -18,7 +15,7 @@ const avgAmountEl   = document.getElementById('avg-amount');
 const yearlyTotalEl = document.getElementById('yearly-total');
 
 
-// ── Sanitize text before injecting into HTML ────────────
+// sanitize text
 function escapeHtml(str) {
     const div = document.createElement('div');
     div.textContent = String(str);
@@ -26,10 +23,7 @@ function escapeHtml(str) {
 }
 
 
-// ── Currency Formatter (Indian Standard) ────────────────
-// Formats numbers in the Indian numbering system:
-//   1234567.89 → "12,34,567.89"
-// Uses the built-in Intl API with 'en-IN' locale.
+// currency formatter
 function formatINR(amount) {
     return amount.toLocaleString('en-IN', {
         minimumFractionDigits: 2,
@@ -38,8 +32,7 @@ function formatINR(amount) {
 }
 
 
-// ── Auth Guard ──────────────────────────────────────────
-// If no JWT token exists, redirect to login immediately.
+// auth check
 document.addEventListener('DOMContentLoaded', () => {
     const token = localStorage.getItem('token');
     if (!token) {
@@ -50,14 +43,14 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
-// ── Logout ──────────────────────────────────────────────
+// logout logic
 function logout() {
     localStorage.removeItem('token');
     window.location.href = 'index.html';
 }
 
 
-// ── API: Fetch Subscriptions ────────────────────────────
+// fetch subs
 async function fetchSubscriptions(token) {
     try {
         const response = await fetch(`${API_URL}/subscriptions`, {
@@ -85,11 +78,7 @@ async function fetchSubscriptions(token) {
 }
 
 
-// ── Render: Confidence Dots ─────────────────────────────
-// Visualizes detection confidence as a row of dots:
-//   2 transactions  = 2 amber dots (low confidence)
-//   3-4 transactions = 3 green dots (medium)
-//   5+ transactions  = 5 green dots (high)
+// render confidence indicator
 function renderConfidenceDots(txCount) {
     const level   = txCount >= 5 ? 5 : txCount >= 3 ? 3 : 2;
     const maxDots = 5;
@@ -109,8 +98,7 @@ function renderConfidenceDots(txCount) {
 }
 
 
-// ── Render: Cycle Label ─────────────────────────────────
-// Converts raw day-count into a human-readable frequency label.
+// cycle label logic
 function getCycleLabel(cycleDays) {
     const days = parseInt(cycleDays);
     if (days >= 28 && days <= 31) return 'Monthly';
@@ -120,7 +108,7 @@ function getCycleLabel(cycleDays) {
 }
 
 
-// ── Render: Full Table ──────────────────────────────────
+// render table
 function renderTable(subscriptions) {
 
     // Handle empty state
@@ -143,7 +131,7 @@ function renderTable(subscriptions) {
         return;
     }
 
-    // ── Calculate Stats ─────────────────────────────────
+    // calculate stats
     let monthlyTotal = 0;
 
     subscriptions.forEach(sub => {
@@ -177,7 +165,7 @@ function renderTable(subscriptions) {
         subsList.appendChild(tr);
     });
 
-    // ── Update Stat Cards ───────────────────────────────
+    // update stat cards
     const subCount = subscriptions.length;
     const avgPerSub = subCount > 0 ? monthlyTotal / subCount : 0;
     const yearlyProjection = monthlyTotal * 12;
@@ -189,7 +177,7 @@ function renderTable(subscriptions) {
 }
 
 
-// ── Error Display ───────────────────────────────────────
+// error display
 function showError(msg) {
     errorMsg.textContent = msg;
     errorMsg.classList.remove('hidden');

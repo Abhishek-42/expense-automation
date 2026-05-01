@@ -1,19 +1,11 @@
-/* ============================================================
-   APP.JS — Auth & Onboarding Logic
-   
-   FLOW:
-   1. If user already has a token → redirect to dashboard.html
-   2. Login → get token → redirect to dashboard.html
-   3. Register → auto-login → show one-time CSV upload → dashboard.html
-   4. Upload is ONLY shown once after registration (onboarding)
-   ============================================================ */
+// auth & onboarding logic
 
 // Automatically use local backend if testing locally, or the EC2 Public IP if hosted online!
 const API_URL = (window.location.protocol === 'file:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
     ? 'http://127.0.0.1:8000'
     : `http://${window.location.hostname}:8000`;
 
-// ── DOM References ──────────────────────────────────────
+// DOM elements
 const authLayout = document.getElementById('auth-layout');
 const onboardingPanel = document.getElementById('onboarding-panel');
 const loginForm = document.getElementById('login-form');
@@ -25,7 +17,7 @@ const fileMsg = document.querySelector('.file-msg');
 const uploadStatus = document.getElementById('upload-status');
 
 
-// ── Auth Guard ──────────────────────────────────────────
+// auth guard
 // If user is already logged in, send them straight to the dashboard.
 document.addEventListener('DOMContentLoaded', () => {
     const token = localStorage.getItem('token');
@@ -35,9 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
-// ══════════════════════════════════════════════════════════
-//  UI HELPERS
-// ══════════════════════════════════════════════════════════
+// ui helpers
 
 function switchTab(tab) {
     document.getElementById('tab-login').classList.remove('active');
@@ -88,11 +78,7 @@ fileInput.addEventListener('change', (e) => {
 });
 
 
-// ══════════════════════════════════════════════════════════
-//  API: REGISTER
-//  On success: auto-login the user, then show the
-//  one-time onboarding CSV upload panel.
-// ══════════════════════════════════════════════════════════
+// register logic
 
 registerForm.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -154,11 +140,7 @@ registerForm.addEventListener('submit', async (e) => {
 });
 
 
-// ══════════════════════════════════════════════════════════
-//  API: LOGIN
-//  On success: store token and redirect straight to dashboard.
-//  NO upload prompt for returning users.
-// ══════════════════════════════════════════════════════════
+// login logic
 
 loginForm.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -200,10 +182,7 @@ loginForm.addEventListener('submit', async (e) => {
 });
 
 
-// ══════════════════════════════════════════════════════════
-//  API: UPLOAD CSV (Onboarding — One-Time)
-//  This form only appears after a fresh registration.
-// ══════════════════════════════════════════════════════════
+// upload csv
 
 uploadForm.addEventListener('submit', async (e) => {
     e.preventDefault();

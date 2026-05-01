@@ -1,11 +1,8 @@
-/* ============================================================
-   DASHBOARD — Standalone Design System
-   Theme: 80% Black + 20% Electric Blue. Premium & Clean.
-   ============================================================ */
+/* dashboard design system */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
-/* ── Design Tokens ───────────────────────────────────── */
+/* tokens */
 :root {
     /* Black Tones (80% of the palette) */
     --black-pure:    #000000;
@@ -42,7 +39,7 @@
     --radius-lg:     14px;
 }
 
-/* ── Reset ───────────────────────────────────────────── */
+/* reset */
 *, *::before, *::after {
     box-sizing: border-box;
     margin: 0;
@@ -64,9 +61,7 @@ body {
     overflow-x: hidden;
 }
 
-/* ════════════════════════════════════════════════════════
-   SIDEBAR
-   ════════════════════════════════════════════════════════ */
+/* sidebar */
 .sidebar {
     position: fixed;
     top: 0;
@@ -186,9 +181,7 @@ body {
     background: rgba(239, 68, 68, 0.06);
 }
 
-/* ════════════════════════════════════════════════════════
-   MAIN CONTENT
-   ════════════════════════════════════════════════════════ */
+/* main content */
 .main-content {
     margin-left: var(--sidebar-w);
     flex: 1;
@@ -196,7 +189,7 @@ body {
     min-height: 100vh;
 }
 
-/* ── Page Header ─────────────────────────────────────── */
+/* page header */
 .page-header {
     display: flex;
     justify-content: space-between;
@@ -249,7 +242,7 @@ body {
     50% { opacity: 0.4; }
 }
 
-/* ── Stat Cards Grid ─────────────────────────────────── */
+/* stat cards grid */
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -330,7 +323,7 @@ body {
     font-variant-numeric: tabular-nums;
 }
 
-/* ── Table Panel ─────────────────────────────────────── */
+/* table panel */
 .table-panel {
     background: var(--black-card);
     border: 1px solid var(--black-border);
@@ -394,7 +387,7 @@ body {
     to { transform: rotate(360deg); }
 }
 
-/* ── Data Table ──────────────────────────────────────── */
+/* data table */
 .table-scroll {
     overflow-x: auto;
 }
@@ -512,7 +505,7 @@ body {
     border-color: rgba(239, 68, 68, 0.3);
 }
 
-/* ── Empty State ─────────────────────────────────────── */
+/* empty state */
 .empty-state {
     text-align: center;
     padding: 56px 32px;
@@ -542,9 +535,7 @@ body {
     text-decoration: underline;
 }
 
-/* ════════════════════════════════════════════════════════
-   RESPONSIVE BREAKPOINTS
-   ════════════════════════════════════════════════════════ */
+/* responsive breakpoints */
 @media (max-width: 1024px) {
     .stats-grid {
         grid-template-columns: repeat(2, 1fr);
