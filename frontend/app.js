@@ -14,15 +14,15 @@ const API_URL = (window.location.protocol === 'file:' || window.location.hostnam
     : `http://${window.location.hostname}:8000`;
 
 // ── DOM References ──────────────────────────────────────
-const authLayout        = document.getElementById('auth-layout');
-const onboardingPanel   = document.getElementById('onboarding-panel');
-const loginForm         = document.getElementById('login-form');
-const registerForm      = document.getElementById('register-form');
-const uploadForm        = document.getElementById('upload-form');
-const notification      = document.getElementById('notification');
-const fileInput         = document.getElementById('csv-file');
-const fileMsg           = document.querySelector('.file-msg');
-const uploadStatus      = document.getElementById('upload-status');
+const authLayout = document.getElementById('auth-layout');
+const onboardingPanel = document.getElementById('onboarding-panel');
+const loginForm = document.getElementById('login-form');
+const registerForm = document.getElementById('register-form');
+const uploadForm = document.getElementById('upload-form');
+const notification = document.getElementById('notification');
+const fileInput = document.getElementById('csv-file');
+const fileMsg = document.querySelector('.file-msg');
+const uploadStatus = document.getElementById('upload-status');
 
 
 // ── Auth Guard ──────────────────────────────────────────

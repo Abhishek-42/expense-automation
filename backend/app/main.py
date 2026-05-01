@@ -27,28 +27,22 @@ req_cols = {"date", "description", "amount"}
 async def upload_transactions(file: UploadFile = File(...), current_user = Depends(get_current_user)):
     uid = current_user
 
-    # check if it's a csv
     if not file.filename.endswith(".csv"):
         return {"error": "only csv files are allowed"}
 
-    # read the file content
     content = await file.read()
 
-    # check size
     if len(content) > max_size:
         return {"error": "file is too big"}
 
-    # convert bytes to string
     text = content.decode("utf-8")
     reader = csv.DictReader(io.StringIO(text))
 
-    # check columns
     if not reader.fieldnames or not req_cols.issubset(set(reader.fieldnames)):
         return {"error": "bad csv format"}
 
     rows = []
     
-    # loop through the csv lines
     for row in reader:
         rows.append({
             "date": row["date"],
@@ -56,11 +50,9 @@ async def upload_transactions(file: UploadFile = File(...), current_user = Depen
             "amount": float(row["amount"])
         })
 
-        # make a unique id for dynamodb
         raw_str = f"{uid}-{row['date']}-{row['description']}-{row['amount']}"
         t_id = hashlib.sha256(raw_str.encode()).hexdigest()
 
-        # save to dynamodb
         t_item = {
             "transaction_id": t_id,
             "user_id": uid,
@@ -77,10 +69,8 @@ async def upload_transactions(file: UploadFile = File(...), current_user = Depen
         Body=content
     )
 
-    # run my custom subscription logic
     subs = detect_subscriptions(rows)
 
-    # save found subscriptions to db
     for s in subs:
         raw_sub = f"sub-{uid}-{s['merchant_name']}"
         s_id = hashlib.sha256(raw_sub.encode()).hexdigest()
@@ -104,7 +94,6 @@ async def upload_transactions(file: UploadFile = File(...), current_user = Depen
 
 @app.get("/subscriptions")
 def get_subscriptions(current_user = Depends(get_current_user)):
-    # fetch user subs
     res = subscriptions_table.scan(
         FilterExpression="user_id = :u",
         ExpressionAttributeValues={":u": current_user}
@@ -113,7 +102,6 @@ def get_subscriptions(current_user = Depends(get_current_user)):
 
 @app.get("/transactions")
 def get_transactions(current_user = Depends(get_current_user)):
-    # fetch user txns
     res = transactions_table.scan(
         FilterExpression="user_id = :u",
         ExpressionAttributeValues={":u": current_user}
@@ -122,23 +110,19 @@ def get_transactions(current_user = Depends(get_current_user)):
 
 @app.get("/health")
 def health():
-    # just to check if api is up
     return {"status": "ok"}
 
 @app.post("/admin/trigger-notifications")
 def trigger_notifications():
-    # trigger the email checks manually
     res = check_subs_and_email()
     return res
 
 @app.post("/register")
 def register_user(user: UserCreate):
-    # see if username is taken
     res = user_ids.get_item(Key={"user_id": user.username})
     if "Item" in res:
         return {"error": "user already exists"}
 
-    # hash pass and save
     hashed = hash_password(user.password)
     user_ids.put_item(
         Item={
@@ -151,11 +135,9 @@ def register_user(user: UserCreate):
 
 @app.post("/token", response_model=Token)
 def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
-    # try to login user
     res = user_ids.get_item(Key={"user_id": form_data.username})
     u_rec = res.get("Item")
 
-    # check if password is correct
     if not u_rec or not check_password(form_data.password, u_rec.get("hashed_password", "")):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -163,6 +145,5 @@ def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
             headers={"WWW-Authenticate": "Bearer"},
         )
 
-    # make token
     token = make_token(data={"sub": form_data.username})
     return {"access_token": token, "token_type": "bearer"}

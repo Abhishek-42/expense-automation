@@ -19,25 +19,20 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 def check_password(plain_pass, hashed_pass):
-    # check if the typed password matches the saved hash
     return pwd_context.verify(plain_pass, hashed_pass)
 
 def hash_password(password):
-    # turn the password into a secure hash
     return pwd_context.hash(password)
 
 def make_token(data):
-    # create a jwt token for the user
     to_encode = data.copy()
     expire_time = datetime.now(timezone.utc) + timedelta(minutes=EXPIRE_MINUTES)
     to_encode.update({"exp": expire_time})
     
-    # sign it with our secret key
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
 def get_current_user(token=Depends(oauth2_scheme)):
-    # read the token to see who is logged in
     error = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Invalid credentials",
@@ -54,7 +49,6 @@ def get_current_user(token=Depends(oauth2_scheme)):
 
     return username
 
-# models for incoming data
 class UserCreate(BaseModel):
     username: str
     email: str

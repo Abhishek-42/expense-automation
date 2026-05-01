@@ -1,40 +1,31 @@
 # Expense Automation System
 
-The Expense Automation System is a cloud-based financial tracking application designed to automatically identify and manage recurring subscriptions and regular bill payments from a user’s bank transaction history.
+This is a backend project I built to help track and automatically detect recurring subscriptions from bank statements. 
 
 ## Overview
 
-The system allows users to upload a CSV file exported from their bank or credit card provider, which contains detailed transaction records including dates, descriptions, and debit amounts. Once uploaded, the file is securely stored in Amazon S3 and processed by a backend service built using Python and FastAPI.
+You can upload a CSV of your bank or credit card transactions. The backend (built with FastAPI) processes the CSV, cleans up the merchant names, and runs some logic to figure out which payments are recurring subscriptions. It looks for:
+- Same merchant names
+- Similar amounts
+- A repeating time gap (like every 30 days)
 
-The application parses the transaction data, filters debit entries, normalizes merchant  names, and applies rule-based pattern recognition to detect recurring payments. A    transaction is classified as a subscription if it shows:    
-- Consistent merchant identity   
-- Similar transaction amounts within a defined tolerance range    
-- A recurring interval (typically between 28 and 31 days across multiple cycles)
+The raw CSV is stored in an S3 bucket, but we only save the actual subscription data (like merchant name, amount, cycle days, and next payment date) into DynamoDB.
 
-Instead of storing complete raw transaction history, the system retains only structured subscription metadata such as:
-- Merchant name    
-- Average billing amount   
-- Billing cycle 
-- Last payment date
-- Next expected deduction date
-- A confidence score indicating detection reliability
+## Email Alerts
 
-This processed data is stored in Amazon DynamoDB, enabling scalable and efficient user-specific data management.
+I also set up a notification system. Using AWS EventBridge and SES, the backend checks every day to see if any subscriptions are coming up in the next 3 days. If it finds one, it sends you an email reminder so you don't get charged unexpectedly.
 
-## Automated Notifications
+## Tech Stack
 
-The system also includes an automated notification mechanism that proactively alerts users before upcoming deductions. A scheduled event, triggered using AWS EventBridge, periodically invokes backend logic to evaluate upcoming subscription due dates. If a recurring payment is expected within a predefined window, such as three to five days, the system sends an email reminder using Amazon Simple Email Service (SES), helping users maintain financial awareness and avoid unexpected deductions.
+- **Backend:** Python, FastAPI
+- **Database:** DynamoDB
+- **Storage:** Amazon S3
+- **Emails:** Amazon SES
+- **Infra:** AWS CDK
 
-## Architecture & Technology Stack
+## Setup
 
-The backend is implemented using FastAPI to ensure high performance and asynchronous request handling, while DynamoDB provides a flexible NoSQL data model optimized for scalable cloud environments. The overall architecture follows modern cloud-native design principles, emphasizing serverless integration, cost efficiency, data privacy, and modular processing.
+1. Install dependencies: `pip install -r requirements.txt`
+2. Deploy the CDK stack: `cdk deploy`
+3. Run the FastAPI server: `uvicorn app.main:app --reload`
 
-## Development Standards
-
-To ensure the project remains robust and maintainable for future developers, all contributions must adhere to these "Human-Centric" standards:
-- **Clean Architecture:** Maintain a clear separation between infrastructure (CDK), backend logic (FastAPI), and presentation (Vanilla JS/CSS).
-- **Self-Documenting Code:** Use descriptive naming for variables, functions, and files. Avoid clever "hacks" that sacrifice readability.
-- **Premium Aesthetics:** The frontend must maintain a high-quality, professional dark-blue theme with polished, responsive components.
-- **Documentation First:** Every major logic change should be reflected in the code comments and project trackers (`README.md`, `progress.md`).
-
-By combining automated financial pattern detection with cloud infrastructure services, the Expense Automation System demonstrates practical backend engineering, event-driven design, and real-world problem solving suitable for a robust cloud project.

@@ -10,15 +10,12 @@ load_dotenv()
 MY_EMAIL = os.environ.get("SES_SENDER_EMAIL", "anila9823@gmail.com") 
 
 def get_next_date(last_date, cycle):
-    # calculate the next payment date
     d1 = datetime.fromisoformat(last_date)
     return d1 + timedelta(days=cycle)
 
 def send_email(to_email, merchant_name, amt, expected_date):
-    # subject of the email
     sub = "Upcoming Subscription: " + merchant_name
     
-    # basic html body
     html_body = """
     <html>
     <body>
@@ -37,7 +34,6 @@ def send_email(to_email, merchant_name, amt, expected_date):
     txt_body = "Hi, you have a sub coming up for " + merchant_name
 
     try:
-        # call aws ses to send
         resp = ses_client.send_email(
             Destination={'ToAddresses': [to_email]},
             Message={
@@ -58,13 +54,11 @@ def send_email(to_email, merchant_name, amt, expected_date):
 def check_subs_and_email():
     today = datetime.now()
     
-    # get all subs from db
     res = subscriptions_table.scan()
     all_subs = res.get('Items', [])
     
     count = 0
     
-    # loop through them
     for s in all_subs:
         last_d = s.get('last_payment_date')
         cycle = int(s.get('billing_cycle_days', 30))
@@ -74,14 +68,11 @@ def check_subs_and_email():
             
         next_d = get_next_date(last_d, cycle)
         
-        # calculate diff
         diff = (next_d.date() - today.date()).days
         
-        # if diff is between 0 and 3 days, send email
         if diff >= 0 and diff <= 3:
             uid = s.get('user_id')
             
-            # get user email from other table
             u_res = user_ids.get_item(Key={'user_id': uid})
             u_data = u_res.get('Item')
             
