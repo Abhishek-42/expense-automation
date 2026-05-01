@@ -1,7 +1,7 @@
 import boto3
 import os
 from datetime import datetime, timedelta
-from app.db import subscriptions_table, user_ids, ses_client
+from .db import subscriptions_table, user_ids, ses_client
 from dotenv import load_dotenv
 
 load_dotenv()

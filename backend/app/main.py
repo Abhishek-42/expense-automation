@@ -1,10 +1,10 @@
 from fastapi import FastAPI, UploadFile, File, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.middleware.cors import CORSMiddleware
-from app.auth import hash_password, check_password, make_token, UserCreate, Token, get_current_user
-from app.db import s3_client, bucket_name, transactions_table, user_ids, subscriptions_table
-from app.engine import detect_subscriptions
-from app.notifications import check_subs_and_email
+from .auth import hash_password, check_password, make_token, UserCreate, Token, get_current_user
+from .db import s3_client, bucket_name, transactions_table, user_ids, subscriptions_table
+from .engine import detect_subscriptions
+from .notifications import check_subs_and_email
 from decimal import Decimal as dec
 import csv
 import io
@@ -23,8 +23,9 @@ app.add_middleware(
 max_size = 5 * 1024 * 1024
 req_cols = {"date", "description", "amount"}
 
+
 @app.post("/upload/transactions")
-async def upload_transactions(file: UploadFile = File(...), current_user = Depends(get_current_user)):
+async def upload_transactions(file: UploadFile = File(...), current_user: str = Depends(get_current_user)):
     uid = current_user
 
     if not file.filename.endswith(".csv"):
@@ -92,30 +93,35 @@ async def upload_transactions(file: UploadFile = File(...), current_user = Depen
         "found_subs": len(subs)
     }
 
+
 @app.get("/subscriptions")
-def get_subscriptions(current_user = Depends(get_current_user)):
+def get_subscriptions(current_user: str = Depends(get_current_user)):
     res = subscriptions_table.scan(
         FilterExpression="user_id = :u",
         ExpressionAttributeValues={":u": current_user}
     )
     return {"subscriptions": res.get("Items", [])}
 
+
 @app.get("/transactions")
-def get_transactions(current_user = Depends(get_current_user)):
+def get_transactions(current_user: str = Depends(get_current_user)):
     res = transactions_table.scan(
         FilterExpression="user_id = :u",
         ExpressionAttributeValues={":u": current_user}
     )
     return {"items": res["Items"]}
 
+
 @app.get("/health")
 def health():
     return {"status": "ok"}
+
 
 @app.post("/admin/trigger-notifications")
 def trigger_notifications():
     res = check_subs_and_email()
     return res
+
 
 @app.post("/register")
 def register_user(user: UserCreate):
@@ -132,6 +138,7 @@ def register_user(user: UserCreate):
         }
     )
     return {"msg": "Registered ok"}
+
 
 @app.post("/token", response_model=Token)
 def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
