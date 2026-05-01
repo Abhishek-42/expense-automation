@@ -3,7 +3,10 @@
    Handles: Auth guard, API fetch, table rendering, stats
    ============================================================ */
 
-const API_URL = 'http://127.0.0.1:8000';
+// Automatically use local backend if testing locally, or the EC2 Public IP if hosted online!
+const API_URL = (window.location.protocol === 'file:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+    ? 'http://127.0.0.1:8000'
+    : `http://${window.location.hostname}:8000`;
 
 // ── DOM References ──────────────────────────────────────
 const subsList      = document.getElementById('subs-list');
@@ -13,6 +16,14 @@ const monthlyTotalEl = document.getElementById('monthly-total');
 const subCountEl    = document.getElementById('sub-count');
 const avgAmountEl   = document.getElementById('avg-amount');
 const yearlyTotalEl = document.getElementById('yearly-total');
+
+
+// ── Sanitize text before injecting into HTML ────────────
+function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = String(str);
+    return div.innerHTML;
+}
 
 
 // ── Currency Formatter (Indian Standard) ────────────────
@@ -149,10 +160,10 @@ function renderTable(subscriptions) {
         const tr = document.createElement('tr');
 
         tr.innerHTML = `
-            <td><span class="merchant-name">${sub.merchant_name}</span></td>
+            <td><span class="merchant-name">${escapeHtml(sub.merchant_name)}</span></td>
             <td><span class="amount-cell">₹${formatINR(parseFloat(sub.average_amount))}</span></td>
             <td><span class="cycle-badge">${getCycleLabel(sub.billing_cycle_days)}</span></td>
-            <td>${sub.last_payment_date}</td>
+            <td>${escapeHtml(sub.last_payment_date)}</td>
             <td>
                 <div class="confidence-bar">
                     ${renderConfidenceDots(txCount)}

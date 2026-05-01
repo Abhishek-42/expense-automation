@@ -1,17 +1,17 @@
 @echo off
 
-echo Activating virtual environment...
+echo Activate virtual environment
 call .\.venv\Scripts\activate.bat
 
-echo Changing to backend directory...
+echo change dir
 cd backend
 
-echo Installing Python requirements...
+echo Installing Python requirements
 python -m pip install -r requirements.txt
 
-echo Starting FastAPI server with Uvicorn...
-echo Opening Frontend in browser...
+echo Starting FastAPI server with Uvicorn
+echo Opening Frontend in browser
 start "" "..\frontend\index.html"
-python -m uvicorn app.main:app --reload
+python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 
 pause

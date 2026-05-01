@@ -8,7 +8,10 @@
    4. Upload is ONLY shown once after registration (onboarding)
    ============================================================ */
 
-const API_URL = 'http://127.0.0.1:8000';
+// Automatically use local backend if testing locally, or the EC2 Public IP if hosted online!
+const API_URL = (window.location.protocol === 'file:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+    ? 'http://127.0.0.1:8000'
+    : `http://${window.location.hostname}:8000`;
 
 // ── DOM References ──────────────────────────────────────
 const authLayout        = document.getElementById('auth-layout');
@@ -100,6 +103,7 @@ registerForm.addEventListener('submit', async (e) => {
     btn.disabled = true;
 
     const username = document.getElementById('reg-username').value;
+    const email = document.getElementById('reg-email').value;
     const password = document.getElementById('reg-password').value;
 
     try {
@@ -107,7 +111,7 @@ registerForm.addEventListener('submit', async (e) => {
         const regResponse = await fetch(`${API_URL}/register`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ username, password })
+            body: JSON.stringify({ username, email, password })
         });
 
         const regData = await regResponse.json();
