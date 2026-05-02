@@ -145,6 +145,12 @@ function renderTable(subscriptions) {
 
         // Build the table row
         const txCount = sub.confidence_based_on_tx_count || sub.original_transactions_count || 2;
+        
+        // Calculate next payment date
+        const lastDate = new Date(sub.last_payment_date);
+        lastDate.setDate(lastDate.getDate() + parseInt(sub.billing_cycle_days));
+        const nextPaymentDate = lastDate.toISOString().split('T')[0];
+
         const tr = document.createElement('tr');
 
         tr.innerHTML = `
@@ -152,6 +158,7 @@ function renderTable(subscriptions) {
             <td><span class="amount-cell">₹${formatINR(parseFloat(sub.average_amount))}</span></td>
             <td><span class="cycle-badge">${getCycleLabel(sub.billing_cycle_days)}</span></td>
             <td>${escapeHtml(sub.last_payment_date)}</td>
+            <td class="highlight-date">${escapeHtml(nextPaymentDate)}</td>
             <td>
                 <div class="confidence-bar">
                     ${renderConfidenceDots(txCount)}
