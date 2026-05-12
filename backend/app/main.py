@@ -9,6 +9,9 @@ from decimal import Decimal as dec
 import csv
 import io
 import hashlib
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
+import os
 
 app = FastAPI()
 
@@ -19,6 +22,12 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Get the path to the frontend directory
+# Assuming main.py is in backend/app/main.py
+current_dir = os.path.dirname(os.path.realpath(__file__))
+frontend_path = os.path.join(current_dir, "../../frontend")
+
 
 max_size = 5 * 1024 * 1024
 req_cols = {"date", "description", "amount"}
@@ -154,3 +163,7 @@ def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
 
     token = make_token(data={"sub": form_data.username})
     return {"access_token": token, "token_type": "bearer"}
+
+# Mount static files (JS, CSS, images, and HTML) at the end
+# This ensures it acts as a fallback and doesn't intercept API routes
+app.mount("/", StaticFiles(directory=frontend_path, html=True), name="static")
