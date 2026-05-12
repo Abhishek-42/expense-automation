@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # my verified email here
-MY_EMAIL = os.environ.get("SES_SENDER_EMAIL", "anila9823@gmail.com") 
+MY_EMAIL = os.environ.get("SES_SENDER_EMAIL") 
 
 def get_next_date(last_date, cycle):
     d1 = datetime.fromisoformat(last_date)

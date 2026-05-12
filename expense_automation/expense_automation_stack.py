@@ -58,7 +58,7 @@ class ExpenseAutomationStack(Stack):
         eb_connection = events.Connection(self, "BackendConnection",
             authorization=events.Authorization.api_key(
                 "x-api-key", 
-                SecretValue.unsafe_plain_text("dev-secret-key") # TODO: move to secrets manager later
+                SecretValue.unsafe_plain_text(os.environ.get("BACKEND_ADMIN_API_KEY", "dev-secret-key"))
             )
         )
 

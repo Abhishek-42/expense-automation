@@ -4,7 +4,7 @@ from datetime import datetime
 # words to ignore in merchant names
 JUNK_WORDS = ['store', 'payment', 'inc', 'llc', 'com', 'mktp', 'market', 'local']
 
-KNOWN_SUBS = ['netflix', 'spotify', 'amazon prime', 'gym', 'hulu', 'adobe', 'aws', 'cloud', 'internet', 'broadband', 'apple']
+KNOWN_SUBS = ['netflix', 'spotify', 'amazon prime', 'gym', 'adobe', 'aws', 'cloud', 'internet', 'broadband']
 KNOWN_HABITS = ['starbucks', 'shell', 'mcdonalds', 'uber', 'lyft', 'grocery', 'cafe', 'restaurant']
 
 def clean_name(desc):

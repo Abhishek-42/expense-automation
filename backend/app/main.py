@@ -88,7 +88,7 @@ async def upload_transactions(file: UploadFile = File(...), current_user: str = 
         subscriptions_table.put_item(Item=s_item)
 
     return {
-        "msg": "uploaded okay",
+        "message": "uploaded successfully",
         "processed": len(rows),
         "found_subs": len(subs)
     }
@@ -137,7 +137,7 @@ def register_user(user: UserCreate):
             "hashed_password": hashed
         }
     )
-    return {"msg": "Registered ok"}
+    return {"message": "Registered successfully"}
 
 
 @app.post("/token", response_model=Token)
